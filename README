@@ -1,0 +1,65 @@
+Aspecte generale:
+
+Proiectul este facut in Eclipse.
+
+In folderul Surse se gaseste un fisier numit test.txt in care sunt scrise comenzi si outputul rezultat in urma lor.
+
+Parola utilizatorului root este “rootpass”.
+
+Comanda newuser trebuie sa primeasca 4 parametrii obligatoriu (user, parola, nume, prenume).
+Comanda rm primeste parametrul -r dupa numele fisierului.
+
+Programul nu are interfata grafica. Comenzile se scriu in consola. Clasa Main are rolul de a citi comenzile. Pentru a iesi din program se poate folosi comanda exit.
+
+
+
+Implementare:
+
+Pentru a construi programul am folosit 4 clase de management, fiecare din ele fiind singleton. Cele 4 clase se ocupa de useri, fisiere, comenzi si cloud. Am facut o clasa abstracta numita Repo ce
+implementeaza interfata Repository pentru ca clasele File si Directory aveau multe aspecte comune.
+
+In clasa ce se ocupa de comenzi am folosit Factory pattern pentru a crea obiectele ce reprezinta comenzile. Tot din aceasta clasa se porneste executia unei comenzi.
+
+Clasa ce se ocupa de useri are 2 useri definiti de la inceputul programului. Cei doi sunt guest si root. In aceasta clasa exista metode pentru a adauga, schimba si afisa userii. Aici se retine userul
+curent precum si toti userii din sistem.
+
+Clasa FileSystemManager creeaza folderul radacina. Contine metode pentru a adauga si a sterge un repo. Tot aici se retine directorul curent.
+
+Fiecare comanda are propria ei clasa (inclusiv comenzile de sistem). Diferenta intre comenzile de sistem si restul comenzilor este ca restul comenzilor mostenesc o clasa comuna ReadWriteCommand. Pentru cele 3 categorii de comenzi exista 3 clase generale numite ReadCommand WriteCommand si SystemCommand pentru a putea stabili categoria din care face parte o comanda.
+
+Clasa User defineste un user. Clasa Rights defineste un set de drepturi.
+
+Clasele File si Directory sunt derivate din clasa abstracta Repo si implementeaza interfata Repository. Ambele clase au definit atat constructor cat si copy-constructor.
+
+Clasa Directory contine metode pentru a adauga si a sterge un nod copil precum si pentru a-si actualiza dimensiunea.
+
+Comanda cd primeste ca parametru calea relativa la directorul curent. Calea se parcurge bucata cu bucata si se verifica daca exista directorul respectiv sau in cazul in care se intalneste .. daca
+directorul curent are parinte. Daca la un moment dat nu se gaseste copilul sau parintele, se arunca exceptie.
+
+Comanda login creeaza un user nou cu cei doi parametrii specificati. Acest user este transmis clasei de gestiune a userilor care verifica atat daca username-ul exista cat si daca parola este corecta.
+
+Comanda logout schimba apeleaza metoda de schimbat useri din UserManager si schimba userul curent in guest.
+
+Comanda ls afiseaza toate nodurile copil ale directorului curent. In cazul in care primeste parametrul -a se schimba formatul de afisare. In cazul in care primeste parametrul -r se apeleaza recursiv
+pentru a afisa toate nodurile din ierarhie. Comanda functioneaza si cu expresii regulate.
+
+Comanda mkdir creeaza un nou folder cu numele dat ca parametru. In cazul in care primeste ca argument si drepturile atunci i le atribuie directorului creat. Cand se executa, mai intai se verifica daca
+userul curent este root iar daca nu este se verifica drepturile pe care le are. Daca are drepturile necesare, se adauga in directorul curent prin functia add a clasei de gestiune a fisierelor.
+
+Comanda newuser creeaza un nou user cu cei 4 parametrii specificati (username, parola, nume, prenume) si il adauga in lista userilor existenti.
+
+Comanda pwd afiseaza calea directorului curent dupa ce verifica drepturile. De mentionat ar fi faptul ca fiecare director are stocat intr-o variabila calea sa absoluta.
+
+Comanda rm cauta in copii directorului curent, directorul ce trebuie sters dupa ce s-au verificat drepturile. Daca trebuie sters un director ce are copii atunci comanda trebuie sa contina si parametrul
+-r. Daca nu se gaseste nodul ce trebuie sters se arunca exceptie. Comanda functioneaza si cu expresii regulate.
+
+Comanda touch creeaza un fisier nou in folderul curent dupa ce s-au verificat drepturile. Comanda poate primi 2, 3 sau 4 parametrii. Primul parametru este numele fisierului, al doilea parametru este
+dimensiunea fisierului iar al treilea parametru reprezinta permisiunile. Daca nu se specifica dimensiunea aceasta este 0.
+
+Comanda userinfo afiseaza informatii despre userul curent. Mai precis se apeleaza metoda toString din clasa User. Am suprascris aceasta metoda pentru a afisa informatiile corespunzatoare.
+
+Clasa CloudService gestioneaza serviciul de cloud. Ea contine metode pentru sync upload si liniarizare prin parcurgere DFS (depth-first search).
+
+Clasa StoreStation contine metode pentru stocarea si cautarea unui director.
+Copierea efectiva a informatiilor atat pentru fisiere cat si pentru directoare se face in copy-constructor. In cazul directoarelor copy-constructorul se apeleaza recursiv daca se intalneste un alt
+director.
